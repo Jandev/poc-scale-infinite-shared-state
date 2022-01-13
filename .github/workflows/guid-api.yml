@@ -1,0 +1,78 @@
+name: Build and deploy .NET Core application to Function Apps
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AZURE_FUNCTIONAPP_NAME_EU1: jv-poc-global-weu
+  AZURE_FUNCTIONAPP_NAME_US1: jv-poc-global-cus
+  AZURE_RESOURCEGROUP_NAME_EU1: poc-global-scale
+  AZURE_RESOURCEGROUP_NAME_US1: poc-global-scale
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "."
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 6.x
+  WORKING_DIRECTORY: src
+  DOTNET_CORE_VERSION_INPROC: ""
+jobs:
+  compile-functions-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET Core ${{ env.DOTNET_CORE_VERSION }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+
+      - name: Setup .NET Core (for inproc extensions)
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_CORE_VERSION_INPROC }}
+
+      - name: Dotnet restore
+        run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+
+      - name: Dotnet build
+        run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+
+      - name: Dotnet publish
+        run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output"
+
+      - name: "Zip published content"
+        uses: vimtor/action-zip@v1
+        with:
+          files: ./output/
+          recursive: true
+          dest: artifact.zip
+
+      - name: Publish Functions artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: functions-artifact
+          path: artifact.zip
+
+  deploy-functions-dev:
+    needs: [compile-functions-app]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: functions-artifact
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_DEV }}
+
+      - name: "Deploy web app - EU1"
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME_EU1 }}
+          package: "artifact.zip"
+
+      - name: "Deploy web app - US1"
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME_US1 }}
+          package: "artifact.zip"
