@@ -100,6 +100,10 @@ namespace InfiniteScaleSharedState
 
         private string CreateStateFile()
         {
+            if (!Directory.Exists(MyStateFilePath))
+            {
+                Directory.CreateDirectory(MyStateFilePath);
+            }
             var guid = Guid.NewGuid();
             string stateFile = Path.Combine(MyStateFilePath, MyStateFileName);
             var formattedGuid = guid.ToString("D");
