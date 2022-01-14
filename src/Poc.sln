@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfiniteScaleSharedState", "InfiniteScaleSharedState\InfiniteScaleSharedState.csproj", "{01CFDB67-4D81-427C-90B9-8F3AD34F1D71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Producer", "Producer\Producer.csproj", "{3633AC66-97E9-43A6-9BB1-4107BFE14BF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{01CFDB67-4D81-427C-90B9-8F3AD34F1D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01CFDB67-4D81-427C-90B9-8F3AD34F1D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01CFDB67-4D81-427C-90B9-8F3AD34F1D71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3633AC66-97E9-43A6-9BB1-4107BFE14BF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3633AC66-97E9-43A6-9BB1-4107BFE14BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3633AC66-97E9-43A6-9BB1-4107BFE14BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3633AC66-97E9-43A6-9BB1-4107BFE14BF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
