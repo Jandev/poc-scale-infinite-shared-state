@@ -13,7 +13,7 @@ namespace InfiniteScaleSharedState
     public class Sample
     {
         private const string MyStateFileName = "state.txt";
-        private readonly string MyStateFilePath = Path.Combine(/*Path.GetTempPath()*/"%HOME%", "data", nameof(Sample));
+        private readonly string MyStateFilePath = Path.Combine("D:\\home\\data\\", nameof(Sample));
         private readonly string Instance = $"{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")} - {Environment.GetEnvironmentVariable("INSTANCE_META_PATH")}";
         private readonly LogRecord logRecord;
         private static Dictionary<string, string> MyState = new Dictionary<string, string>();
