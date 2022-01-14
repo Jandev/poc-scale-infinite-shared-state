@@ -14,7 +14,7 @@ namespace InfiniteScaleSharedState
     {
         private const string MyStateFileName = "state.txt";
         private readonly string MyStateFilePath = Path.Combine(Path.GetTempPath(), nameof(Sample));
-        private readonly string HostName = Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME");
+        private readonly string Instance = $"{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")} - {Environment.GetEnvironmentVariable("INSTANCE_META_PATH")}";
         private readonly LogRecord logRecord;
         private static Dictionary<string, string> MyState = new Dictionary<string, string>();
 
@@ -30,7 +30,7 @@ namespace InfiniteScaleSharedState
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation($"Invoking the {nameof(Write)} function on {HostName}.");
+            log.LogInformation($"Invoking the {nameof(Write)} function on {Instance}.");
 
             if (!Directory.Exists(MyStateFilePath))
             {
@@ -39,7 +39,7 @@ namespace InfiniteScaleSharedState
 
             var formattedGuid = CreateStateFile();            
 
-            log.LogInformation($"Invoked the {nameof(Write)} function on {HostName}. Stored `{formattedGuid}`");
+            log.LogInformation($"Invoked the {nameof(Write)} function on {Instance}. Stored `{formattedGuid}`");
             
             return new OkObjectResult($"Stored `{formattedGuid}`");
         }
@@ -50,7 +50,7 @@ namespace InfiniteScaleSharedState
             ILogger log)
         {
             var guid = Guid.NewGuid();
-            log.LogInformation($"Invoking the {nameof(Read)} function on {HostName}.");
+            log.LogInformation($"Invoking the {nameof(Read)} function on {Instance}.");
 
             // First try to work with an `IMemoryCache` or static dictionary. 
             // If this object doesn't contain information, read the state file.
@@ -62,10 +62,10 @@ namespace InfiniteScaleSharedState
                 var content = System.IO.File.ReadAllText(stateFile);
                 log.LogDebug("Read content of state file.");
 
-                return new OkObjectResult($"{nameof(Read)} on {HostName} found `{content}`");
+                return new OkObjectResult($"{nameof(Read)} on {Instance} found `{content}`");
             }
 
-            log.LogWarning($"No state file path found on {HostName}.");
+            log.LogWarning($"No state file path found on {Instance}.");
 
             return new NotFoundResult();
             
@@ -82,17 +82,19 @@ namespace InfiniteScaleSharedState
             string formattedGuid;
             if (File.Exists(stateFile))
             {
+                log.LogInformation($"Found `{stateFile}` on {Instance}");
                 formattedGuid = System.IO.File.ReadAllText(stateFile);
-                log.LogInformation($"Found `{formattedGuid}` on {HostName}");
+                log.LogInformation($"Found `{formattedGuid}` on {Instance}");
             }
             else
             {
+                log.LogInformation($"Creating`{stateFile}` on {Instance}");
                 formattedGuid = CreateStateFile();
-                log.LogInformation($"Created `{formattedGuid}` on {HostName}");
+                log.LogInformation($"Created `{formattedGuid}` on {Instance}");
             }
 
 
-            await this.logRecord.Store(new LogRecord.Entity(int.Parse(messageId), HostName, formattedGuid));
+            await this.logRecord.Store(new LogRecord.Entity(int.Parse(messageId), Instance, formattedGuid));
 
         }
 

@@ -10,13 +10,13 @@ namespace InfiniteScaleSharedState
         private readonly string connectionString;
         private const string Insert = @"INSERT INTO [dbo].[Logging]
            ([Id]
-           ,[Hostname]
+           ,[Instance]
            ,[MessageId]
            ,[FormattedGuid]
            ,[Created])
      VALUES
            (@Id
-           ,@Hostname
+           ,@Instance
            ,@MessageId
            ,@FormattedGuid
            ,@Created)";
@@ -30,8 +30,8 @@ namespace InfiniteScaleSharedState
         {
             await using var connection = new SqlConnection(connectionString);
             await connection.ExecuteAsync(Insert, new { 
-                Id = record.Id, 
-                Hostname = record.Hostname, 
+                Id = record.Id,
+                Instance = record.Instance, 
                 MessageId = record.MessageId,
                 FormattedGuid = record.FormattedGuid,
                 Created = record.Created });
@@ -43,13 +43,13 @@ namespace InfiniteScaleSharedState
             public DateTime Created { get; } = DateTime.UtcNow;
 
             public int MessageId { get; }
-            public string Hostname { get; }
+            public string Instance { get; }
             public string FormattedGuid { get; }
 
             public Entity(int messageId, string hostname, string formattedGuid)
             {
                 MessageId = messageId;
-                Hostname = hostname;
+                Instance = hostname;
                 FormattedGuid = formattedGuid;
             }
         }
@@ -67,7 +67,7 @@ GO
 
 CREATE TABLE [dbo].[Logging](
 	[Id] [uniqueidentifier] NOT NULL,
-	[Hostname] [nvarchar](100) NOT NULL,
+	[Instance] [nvarchar](255) NOT NULL,
 	[MessageId] [int] NOT NULL,
     [FormattedGuid] [nvarchar](100) NOT NULL,
 	[Created] [datetime] NOT NULL
