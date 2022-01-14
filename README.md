@@ -74,3 +74,10 @@ The actual results show otherwise:
 ![Results in Serverless](/docs/images/serverless-mode.png)
 
 As I'd expected before reading the answer, each instance has it's own local storage.
+
+The above is true when I was using the `Temp`-directory in the Azure Functions.  
+As mentioned in Chris' comment over here: https://github.com/Azure/azure-functions-host/issues/3626#issuecomment-431485622 this should only be used for local Function invocation.  
+Sharing date has to be done in the `D:\home\data\`-folder.
+
+When storing the state file over there, the results are like Chris is describing in his SO answer:  
+![Results in Serverless using home folder](/docs/images/serverless-home-folder.png)
