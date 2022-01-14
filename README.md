@@ -69,8 +69,8 @@ I've tried the scenario with 10.000 messages being sent to the Topic and being p
 The expectation, based on the Stack Overflow answer, would be I'd only see 2 guids stored in the database, as they share their local storage between instances of a Function App.
 
 The actual results show otherwise:  
-![Results in Elastic Premium](/docs/images/premium-mode.jpg)
+![Results in Elastic Premium](/docs/images/premium-mode.png)
 
-![Results in Serverless](/docs/images/serverless-mode.jpg)
+![Results in Serverless](/docs/images/serverless-mode.png)
 
 As I'd expected before reading the answer, each instance has it's own local storage.
